@@ -29,7 +29,9 @@ All text above, and the splash screen below must be included in any redistributi
 
 #include "ssd1306_i2c.h"
 
-#include <wiringPiI2C.h>
+#include <wiringx.h>
+#define I2C_DEV "/dev/i2c-1"
+#define SWAPVALUES(a, b) do { typeof(a) temp = a; a = b; b = temp; } while (0)
 
 #include "oled_fonts.h"
 
@@ -227,7 +229,7 @@ void ssd1306_begin(unsigned int vccstate, unsigned int i2caddr)
 
 	_vccstate = vccstate;
 
-	i2cd = wiringPiI2CSetup(i2caddr);
+	i2cd = wiringXI2CSetup(I2C_DEV, i2caddr);
 	if (i2cd < 0) {
 		fprintf(stderr, "ssd1306_i2c : Unable to initialise I2C:\n");
 		return;
@@ -310,7 +312,7 @@ void ssd1306_command(unsigned int c)
 {
 	// I2C
 	unsigned int control = 0x00;	// Co = 0, D/C = 0
-	wiringPiI2CWriteReg8(i2cd, control, c);
+	wiringXI2CWriteReg8(i2cd, control, c);
 }
 
 void ssd1306_display(void)
@@ -335,7 +337,7 @@ void ssd1306_display(void)
 	// I2C
 	int i;
 	for (i = 0; i < (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8); i++) {
-		wiringPiI2CWriteReg8(i2cd, 0x40, buffer[i]); 
+		wiringXI2CWriteReg8(i2cd, 0x40, buffer[i]); 
 		//This sends byte by byte. 
 		//Better to send all buffer without 0x40 first
 		//Should be optimized
@@ -721,7 +723,7 @@ void ssd1306_fillRect(int x, int y, int w, int h, int fillcolor)
 
 	switch (rotation) {
 	case 1:
-		swap_values(x, y);
+		SWAPVALUES(x, y);
 		x = WIDTH - x - 1;
 		break;
 	case 2:
@@ -729,7 +731,7 @@ void ssd1306_fillRect(int x, int y, int w, int h, int fillcolor)
 		y = HEIGHT - y - 1;
 		break;
 	case 3:
-		swap_values(x, y);
+		SWAPVALUES(x, y);
 		y = HEIGHT - y - 1;
 		break;
 	}
