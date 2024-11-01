@@ -1,16 +1,25 @@
-SSD1306 i2c driver for Raspberry PI
------------------------------------
+# Description
 
-Based on Adafruit SSD1306 Arduino library. Some functions came from Adafruit GF$
+This repository is a fork of minimalistic SSD1306 I2C driver:
+`https://github.com/iliapenev/ssd1306_i2c`
 
-Tested on Raspberry Pi 2 with 0.96 Yellow/Blue OLED
+Which is based on Adafruit SSD1306 Arduino library.
 
-Required WiringPi http://wiringpi.com/ and WiringPi i2c lib. 
+# This fork
 
-How to run demo:
-gcc demo.c ssd1306_i2c.c -lwiringPi -o demo
+It is intended to provide the same functionality but without
+relaying on RaspberryPi device and libraries.
 
-./demo
+# Dependencies
 
+Insread of WiringPi it uses WiringX library: https://wiringx.org/
 
+- Use `wiringPiI2C.h` instead of `wiringx.h`
+- Replace `wiringPiI2CSetup()` with `wiringXI2CSetup()`
+- Replace `wiringPiI2CWriteReg8()` with `wiringXI2CWriteReg8()`
 
+Also WiringX needs `I2C_DEV` to be set when working with multiple
+I2C interfaces.
+
+Some other functuins are modified to be compatible with GCC build
+directly on the device.
